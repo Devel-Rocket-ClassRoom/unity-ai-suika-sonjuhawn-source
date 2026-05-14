@@ -61,8 +61,8 @@ namespace Subak
             _col.radius = SPRITE_LOCAL_RADIUS;
 
             _rb.bodyType = kinematicWhileAiming ? RigidbodyType2D.Kinematic : RigidbodyType2D.Dynamic;
-            _rb.angularDamping = 0.05f;
-            _rb.linearDamping = 0f;
+            _rb.angularDamping = 0.5f;
+            _rb.linearDamping = 0.4f;
 
             IsMerged = false;
             _col.enabled = true;
