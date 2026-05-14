@@ -50,15 +50,20 @@ namespace Subak
             _sr.color = data.tint;
             _sr.sortingOrder = data.stage; // 큰 과일이 앞쪽
 
-            // FruitAssetGenerator가 만든 스프라이트는 256x256 텍스처에 반지름 size*0.48의 원을 그림.
-            // PPU=size 이므로 sprite local 공간에서 시각 원의 반지름 = 0.48.
-            // 시각 반지름이 data.radius(월드 단위)가 되도록 transform 스케일을 결정하고,
-            // 콜라이더 로컬 반지름은 sprite local 반지름과 동일하게 두면
-            // 효과적 콜라이더 월드 반지름 = 0.48 × scale = data.radius 로 시각/물리가 일치.
-            const float SPRITE_LOCAL_RADIUS = 0.48f;
-            float scale = data.radius / SPRITE_LOCAL_RADIUS;
+            // 스프라이트 캔버스 대비 본체 반지름 비율을 사용해 콜라이더/시각 정합성 확보.
+            // - sprite.bounds.extents.x: sprite local에서의 캔버스 절반 너비
+            //   (PPU=텍스처 너비이면 0.5, 다르면 다른 값)
+            // - data.visualBodyRadiusFraction: 캔버스 너비 대비 본체 원의 반지름 비율
+            //   (잎 없는 깔끔한 원 ≈ 0.48, 잎 있는 체리/감 ≈ 0.35~0.45)
+            // → 본체 로컬 반지름 = (캔버스 너비) × fraction = (extents.x × 2) × fraction
+            float spriteHalfWidth = (data.sprite != null) ? data.sprite.bounds.extents.x : 0.5f;
+            float fraction = Mathf.Clamp(data.visualBodyRadiusFraction, 0.05f, 0.5f);
+            float bodyLocalRadius = spriteHalfWidth * 2f * fraction;
+            // 본체 시각 반지름이 data.radius(월드)가 되도록 스케일 결정
+            float scale = (bodyLocalRadius > 0.0001f) ? (data.radius / bodyLocalRadius) : 1f;
             transform.localScale = new Vector3(scale, scale, 1f);
-            _col.radius = SPRITE_LOCAL_RADIUS;
+            // 콜라이더 로컬 반지름 = 본체 로컬 반지름 → 효과 월드 반지름 = data.radius
+            _col.radius = bodyLocalRadius;
 
             _rb.bodyType = kinematicWhileAiming ? RigidbodyType2D.Kinematic : RigidbodyType2D.Dynamic;
             _rb.angularDamping = 0.5f;

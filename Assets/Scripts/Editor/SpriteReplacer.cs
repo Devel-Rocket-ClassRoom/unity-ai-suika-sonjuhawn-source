@@ -161,18 +161,21 @@ namespace Subak.EditorTools
                 string fullPath = kvp.Value;
                 string relPath = "Assets" + fullPath.Substring(projectAssets.Length);
 
-                // PNG 임포트 설정
+                // PNG 임포트 설정 — PPU를 텍스처 실제 너비로 자동 설정해서
+                // sprite의 world width가 항상 1 unit이 되도록 한다.
                 AssetDatabase.ImportAsset(relPath);
                 var importer = AssetImporter.GetAtPath(relPath) as TextureImporter;
                 if (importer != null)
                 {
                     importer.textureType = TextureImporterType.Sprite;
-                    // 512x512 가정 시 PPU=512이면 sprite world width = 1 unit.
-                    // 텍스처 크기를 모를 수 있으니 max size 기준 PPU 자동 계산
-                    importer.spritePixelsPerUnit = 512f;
                     importer.alphaIsTransparency = true;
                     importer.mipmapEnabled = false;
                     importer.filterMode = FilterMode.Bilinear;
+
+                    // 텍스처 너비 읽기 위해 일단 import 후 다시 설정
+                    var tex = AssetDatabase.LoadAssetAtPath<Texture2D>(relPath);
+                    float ppu = (tex != null && tex.width > 0) ? tex.width : 512f;
+                    importer.spritePixelsPerUnit = ppu;
                     importer.SaveAndReimport();
                 }
 
