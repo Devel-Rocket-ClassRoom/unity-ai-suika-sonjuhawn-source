@@ -25,7 +25,7 @@ namespace Subak
         [Tooltip("통 안쪽 벽 X 좌표 (가장자리가 닿을 수 있는 한계)")]
         public float minX = -2.0f;
         public float maxX = 2.0f;
-        [Tooltip("벽 안쪽으로의 여유. + 값이면 보수적, - 값이면 가장자리가 벽 너머로 살짝 나가는 것 허용.")]
+        [Tooltip("벽 클램프 여유. + 값이면 가장자리가 벽 너머로 wallSlack만큼 나가는 것 허용(관대), 0이면 벽에 딱 맞음, - 값이면 벽보다 그만큼 안쪽에서 멈춤(보수적).")]
         public float wallSlack = 0.15f;
 
         [Header("Timing")]
