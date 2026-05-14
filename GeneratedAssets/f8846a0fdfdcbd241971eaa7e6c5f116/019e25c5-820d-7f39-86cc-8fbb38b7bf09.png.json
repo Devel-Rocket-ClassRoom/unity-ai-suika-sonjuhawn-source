@@ -1,0 +1,28 @@
+{
+    "asset": "f8846a0fdfdcbd241971eaa7e6c5f116",
+    "fileName": "019e25c5-820d-7f39-86cc-8fbb38b7bf09.png",
+    "prompt": "Cute cartoon Pineapple sprite, yellow with brown diamond pattern, spiky green top, friendly face with simple black eyes and a tiny smile, 2D game asset style, isolated on white background.",
+    "negativePrompt": "",
+    "model": "gemini-3.0-pro",
+    "modelName": "Gemini 3.0 Pro",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "refinementMode": "Generation",
+    "pixelateTargetSize": 0,
+    "pixelateKeepImageSize": false,
+    "pixelatePixelBlockSize": 0,
+    "pixelatePixelGridSize": 0,
+    "pixelateMode": 0,
+    "pixelateOutlineThickness": 0,
+    "doodles": {
+        "m_Items": []
+    },
+    "upscaleFactor": 0,
+    "dimensions": {
+        "width": 1024,
+        "height": 1024
+    },
+    "spriteSheet": false,
+    "duration": 0.0
+}

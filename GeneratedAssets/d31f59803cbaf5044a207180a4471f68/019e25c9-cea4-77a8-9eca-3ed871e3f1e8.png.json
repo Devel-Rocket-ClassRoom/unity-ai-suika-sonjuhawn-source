@@ -1,0 +1,28 @@
+{
+    "asset": "d31f59803cbaf5044a207180a4471f68",
+    "fileName": "019e25c9-cea4-77a8-9eca-3ed871e3f1e8.png",
+    "prompt": "Perfectly spherical Cherry sprite, vibrant red, centered, cute friendly face (simple black eyes, small smile), fits exactly inside a circle silhouette, 2D game asset style, isolated on white background.",
+    "negativePrompt": "",
+    "model": "gemini-3.0-pro",
+    "modelName": "Gemini 3.0 Pro",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "refinementMode": "Generation",
+    "pixelateTargetSize": 0,
+    "pixelateKeepImageSize": false,
+    "pixelatePixelBlockSize": 0,
+    "pixelatePixelGridSize": 0,
+    "pixelateMode": 0,
+    "pixelateOutlineThickness": 0,
+    "doodles": {
+        "m_Items": []
+    },
+    "upscaleFactor": 0,
+    "dimensions": {
+        "width": 1024,
+        "height": 1024
+    },
+    "spriteSheet": false,
+    "duration": 0.0
+}

@@ -1,0 +1,28 @@
+{
+    "asset": "1c029a479b5e6c945b5a51cd6bf9a993",
+    "fileName": "019e25c4-d8fa-7865-bdd5-0cbe5c94199f.png",
+    "prompt": "Cute cartoon Peach sprite, soft pink and yellow, fuzzy texture look, friendly face with simple black eyes and a tiny smile, 2D game asset style, isolated on white background.",
+    "negativePrompt": "",
+    "model": "gemini-3.0-pro",
+    "modelName": "Gemini 3.0 Pro",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "refinementMode": "Generation",
+    "pixelateTargetSize": 0,
+    "pixelateKeepImageSize": false,
+    "pixelatePixelBlockSize": 0,
+    "pixelatePixelGridSize": 0,
+    "pixelateMode": 0,
+    "pixelateOutlineThickness": 0,
+    "doodles": {
+        "m_Items": []
+    },
+    "upscaleFactor": 0,
+    "dimensions": {
+        "width": 1024,
+        "height": 1024
+    },
+    "spriteSheet": false,
+    "duration": 0.0
+}

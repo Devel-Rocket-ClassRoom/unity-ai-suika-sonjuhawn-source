@@ -1,0 +1,28 @@
+{
+    "asset": "8d2087de33c4d9843a6a11755f3c840f",
+    "fileName": "019e25c9-e14d-7fc6-ab1b-afe1c54178a8.png",
+    "prompt": "Perfectly spherical Dekopon orange sprite, vibrant orange with top bump staying inside the circle, centered, cute friendly face (simple black eyes, small smile), fits exactly inside a circle silhouette, 2D game asset style, isolated on white background.",
+    "negativePrompt": "",
+    "model": "gemini-3.0-pro",
+    "modelName": "Gemini 3.0 Pro",
+    "customSeed": -1,
+    "w3CTraceId": "",
+    "feedback": 0,
+    "refinementMode": "Generation",
+    "pixelateTargetSize": 0,
+    "pixelateKeepImageSize": false,
+    "pixelatePixelBlockSize": 0,
+    "pixelatePixelGridSize": 0,
+    "pixelateMode": 0,
+    "pixelateOutlineThickness": 0,
+    "doodles": {
+        "m_Items": []
+    },
+    "upscaleFactor": 0,
+    "dimensions": {
+        "width": 1024,
+        "height": 1024
+    },
+    "spriteSheet": false,
+    "duration": 0.0
+}
