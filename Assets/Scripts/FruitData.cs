@@ -29,6 +29,10 @@ namespace Subak
         [Tooltip("선택: 색조 (스프라이트가 흰색 마스크일 때 사용)")]
         public Color tint = Color.white;
 
+        [Tooltip("스프라이트 캔버스 가로 길이 대비, 본체 원의 반지름 비율.\n잎/줄기 없는 깔끔한 원이면 ≈ 0.48,\n잎이 위로 튀어나오는 과일(체리/감 등)이면 0.35~0.45,\n캔버스에 작게 그려진 경우 0.25~0.35.")]
+        [Range(0.15f, 0.5f)]
+        public float visualBodyRadiusFraction = 0.48f;
+
         /// <summary>삼각수 점수 헬퍼: n(n+1)/2.</summary>
         public static int TriangularScore(int stage) => stage * (stage + 1) / 2;
     }
