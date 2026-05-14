@@ -89,13 +89,33 @@ namespace Subak.EditorTools
             {
                 string filename = Path.GetFileNameWithoutExtension(fullPath).ToLowerInvariant();
                 int stage = MatchStage(filename);
-                if (stage > 0 && !stageToFile.ContainsKey(stage))
+                if (stage <= 0)
+                {
+                    unmatched.Add(Path.GetFileName(fullPath));
+                    continue;
+                }
+
+                bool isCircle = filename.Contains("circle") || filename.Contains("원형");
+
+                if (!stageToFile.ContainsKey(stage))
                 {
                     stageToFile[stage] = fullPath;
                 }
                 else
                 {
-                    unmatched.Add(Path.GetFileName(fullPath));
+                    // 같은 stage에 이미 매칭된 파일이 있을 때, _Circle 들어간 게 우선
+                    string existingName = Path.GetFileNameWithoutExtension(stageToFile[stage]).ToLowerInvariant();
+                    bool existingIsCircle = existingName.Contains("circle") || existingName.Contains("원형");
+                    if (isCircle && !existingIsCircle)
+                    {
+                        // 기존 일반 파일은 unmatched로 강등, 새 circle 파일을 채택
+                        unmatched.Add(Path.GetFileName(stageToFile[stage]));
+                        stageToFile[stage] = fullPath;
+                    }
+                    else
+                    {
+                        unmatched.Add(Path.GetFileName(fullPath));
+                    }
                 }
             }
 
