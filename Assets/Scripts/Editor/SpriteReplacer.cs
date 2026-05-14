@@ -1,6 +1,7 @@
 #if UNITY_EDITOR
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -228,8 +229,9 @@ namespace Subak.EditorTools
                 if (int.TryParse(digits.ToString(), out int n) && n >= 1 && n <= 11) return n;
             }
 
-            // 2) 키워드 (긴 이름 우선 - "복숭아"가 "복" 보다 먼저)
-            foreach (var kvp in NameToStage)
+            // 2) 키워드 — 긴 이름이 먼저 검사되도록 정렬.
+            //    (예: "watermelon"이 "melon"보다, "pineapple"이 "apple"보다 먼저)
+            foreach (var kvp in NameToStage.OrderByDescending(k => k.Key.Length))
             {
                 if (filename.Contains(kvp.Key)) return kvp.Value;
             }
