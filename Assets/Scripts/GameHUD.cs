@@ -81,18 +81,18 @@ namespace Subak
 
         void HandleScoreChanged(int score)
         {
-            if (scoreText != null) scoreText.text = $"점수  {score:N0}";
+            if (scoreText != null) scoreText.text = $"Score  {score:N0}";
         }
 
         void HandleHighestStageChanged(int stage)
         {
             if (highestStageText == null && finalHighestStageText == null) return;
             string label;
-            if (stage <= 0) label = "최고 단계  -";
+            if (stage <= 0) label = "Best  -";
             else
             {
                 var data = (database != null) ? database.GetByStage(stage) : null;
-                label = (data != null) ? $"최고 단계  {data.displayName}" : $"최고 단계  {stage}";
+                label = (data != null) ? $"Best  Stage {stage}" : $"Best  Stage {stage}";
             }
             if (highestStageText != null) highestStageText.text = label;
             if (finalHighestStageText != null) finalHighestStageText.text = label;
@@ -123,7 +123,7 @@ namespace Subak
         {
             if (gameOverPanel != null) gameOverPanel.SetActive(true);
             if (finalScoreText != null && gameManager != null)
-                finalScoreText.text = $"최종 점수  {gameManager.Score:N0}";
+                finalScoreText.text = $"Final Score  {gameManager.Score:N0}";
             // 최고 단계 라벨도 한 번 더 갱신 (게임오버 화면에서 같이 보이도록)
             if (gameManager != null) HandleHighestStageChanged(gameManager.HighestStage);
         }

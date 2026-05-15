@@ -215,12 +215,12 @@ namespace Subak.EditorTools
             }
 
             // 점수 (상단 좌측)
-            var scoreText = CreateText(hudGO.transform, "ScoreText", "점수  0",
+            var scoreText = CreateText(hudGO.transform, "ScoreText", "Score  0",
                 new Vector2(40f, -40f), TextAlignmentOptions.TopLeft, 64,
                 anchor: TextAnchor.UpperLeft);
 
             // 최고 단계 (점수 아래)
-            var highText = CreateText(hudGO.transform, "HighestStageText", "최고 단계  -",
+            var highText = CreateText(hudGO.transform, "HighestStageText", "Best  -",
                 new Vector2(40f, -120f), TextAlignmentOptions.TopLeft, 36,
                 anchor: TextAnchor.UpperLeft);
 
@@ -256,11 +256,11 @@ namespace Subak.EditorTools
                 new Vector2(0, 240), TextAlignmentOptions.Center, 120,
                 anchor: TextAnchor.MiddleCenter);
 
-            var finalScoreText = CreateText(panelGO.transform, "FinalScoreText", "최종 점수  0",
+            var finalScoreText = CreateText(panelGO.transform, "FinalScoreText", "Final Score  0",
                 new Vector2(0, 80), TextAlignmentOptions.Center, 64,
                 anchor: TextAnchor.MiddleCenter);
 
-            var finalHighestText = CreateText(panelGO.transform, "FinalHighestStageText", "최고 단계  -",
+            var finalHighestText = CreateText(panelGO.transform, "FinalHighestStageText", "Best  -",
                 new Vector2(0, 0), TextAlignmentOptions.Center, 40,
                 anchor: TextAnchor.MiddleCenter);
 
@@ -276,7 +276,7 @@ namespace Subak.EditorTools
             var btnImg = btnGO.AddComponent<Image>();
             btnImg.color = new Color(1f, 0.85f, 0.35f);
             var btn = btnGO.AddComponent<Button>();
-            CreateText(btnGO.transform, "Label", "다시 하기",
+            CreateText(btnGO.transform, "Label", "Restart",
                 Vector2.zero, TextAlignmentOptions.Center, 44,
                 anchor: TextAnchor.MiddleCenter);
 
