@@ -112,10 +112,13 @@ namespace Subak.EditorTools
             sp.maxX = halfWidth;
             gm.spawner = sp;
 
-            // 7) HUD (Canvas + Score/Next/GameOver)
+            // 7) 드롭 가이드 라인
+            BuildDropGuide(sp, floorY, wallHeight);
+
+            // 8) HUD (Canvas + Score/Next/GameOver)
             BuildHUD(gm, sp, db);
 
-            // 8) 씬 저장 dirty 마크
+            // 9) 씬 저장 dirty 마크
             var scene = SceneManager.GetActiveScene();
             EditorSceneManager.MarkSceneDirty(scene);
             EditorUtility.DisplayDialog("Subak",
@@ -189,6 +192,44 @@ namespace Subak.EditorTools
             importer.SaveAndReimport();
             _pixelSprite = AssetDatabase.LoadAssetAtPath<Sprite>(path);
             return _pixelSprite;
+        }
+
+        // -------------------- Drop Guide --------------------
+        static void BuildDropGuide(FruitSpawner sp, float floorY, float wallHeight)
+        {
+            var existing = GameObject.Find("DropGuide");
+            if (existing != null) Object.DestroyImmediate(existing);
+
+            var guideGO = new GameObject("DropGuide");
+            var lr = guideGO.AddComponent<LineRenderer>();
+            // 점선 텍스처를 main 텍스처로 가진 머티리얼
+            var dashTex = CreateDashTexture();
+            var mat = new Material(Shader.Find("Sprites/Default"));
+            mat.mainTexture = dashTex;
+            mat.mainTexture.wrapMode = TextureWrapMode.Repeat;
+            lr.material = mat;
+
+            var guide = guideGO.AddComponent<DropGuide>();
+            guide.spawner = sp;
+            guide.topY = floorY + wallHeight + 0.3f;
+            guide.bottomY = floorY + 0.2f;
+        }
+
+        static Texture2D _dashTex;
+        static Texture2D CreateDashTexture()
+        {
+            if (_dashTex != null) return _dashTex;
+            // 1x8 픽셀, 위 4픽셀은 흰색, 아래 4픽셀은 투명
+            var tex = new Texture2D(1, 8, TextureFormat.RGBA32, false);
+            tex.filterMode = FilterMode.Point;
+            tex.wrapMode = TextureWrapMode.Repeat;
+            var pixels = new Color[8];
+            for (int i = 0; i < 8; i++)
+                pixels[i] = (i < 4) ? Color.white : new Color(0, 0, 0, 0);
+            tex.SetPixels(pixels);
+            tex.Apply();
+            _dashTex = tex;
+            return tex;
         }
 
         // -------------------- HUD --------------------

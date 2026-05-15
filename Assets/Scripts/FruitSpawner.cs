@@ -44,6 +44,10 @@ namespace Subak
 
         public int CurrentStage => _current != null ? _current.Stage : 0;
         public int NextStage => _nextStage;
+        /// <summary>조준 중인 과일의 X 좌표 (월드). 조준 중 아니면 0.</summary>
+        public float AimX => _current != null ? _current.transform.position.x : 0f;
+        /// <summary>현재 조준 중인 과일이 있는지.</summary>
+        public bool HasAim => _current != null;
 
         void Start()
         {
