@@ -18,4 +18,4 @@ MonoBehaviour:
   score: 10
   sprite: {fileID: 21300000, guid: 8d2087de33c4d9843a6a11755f3c840f, type: 3}
   tint: {r: 1, g: 1, b: 1, a: 1}
-  visualBodyRadiusFraction: 0.48
+  visualBodyRadiusFraction: 0.39695856
