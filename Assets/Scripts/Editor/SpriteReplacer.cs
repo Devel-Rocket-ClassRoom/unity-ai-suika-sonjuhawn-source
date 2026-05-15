@@ -172,8 +172,9 @@ namespace Subak.EditorTools
                     importer.alphaIsTransparency = true;
                     importer.mipmapEnabled = false;
                     importer.filterMode = FilterMode.Bilinear;
+                    // alpha 픽셀 분석을 위해 Read/Write 활성화
+                    importer.isReadable = true;
 
-                    // 텍스처 너비 읽기 위해 일단 import 후 다시 설정
                     var tex = AssetDatabase.LoadAssetAtPath<Texture2D>(relPath);
                     float ppu = (tex != null && tex.width > 0) ? tex.width : 512f;
                     importer.spritePixelsPerUnit = ppu;
@@ -187,6 +188,15 @@ namespace Subak.EditorTools
                 {
                     data.sprite = sprite;
                     data.tint = Color.white; // tint 리셋해서 원본 색 보존
+
+                    // alpha 마스크 분석으로 본체 반지름 비율 자동 계산
+                    var analyzedTex = AssetDatabase.LoadAssetAtPath<Texture2D>(relPath);
+                    float autoFraction = ComputeBodyRadiusFraction(analyzedTex);
+                    if (autoFraction > 0f)
+                    {
+                        data.visualBodyRadiusFraction = autoFraction;
+                    }
+
                     EditorUtility.SetDirty(data);
                     replaced++;
                 }
@@ -236,6 +246,35 @@ namespace Subak.EditorTools
                 if (filename.Contains(kvp.Key)) return kvp.Value;
             }
             return 0;
+        }
+
+        /// <summary>
+        /// 텍스처의 alpha 마스크 분석으로 본체 반지름 비율(0~0.5) 추정.
+        /// alpha > 0.5 픽셀 면적을 캔버스 면적으로 나눈 비율로부터
+        /// 원의 면적 공식(area = π·r²)을 역산해 반지름 비율을 구함.
+        /// 이 방법은 본체 + 잎/줄기가 함께 있을 때도 본체가 면적의 대부분을 차지하므로
+        /// 잎/줄기의 영향을 작게 받음(area-based, 외곽 외접원 추정보다 강건).
+        /// </summary>
+        static float ComputeBodyRadiusFraction(Texture2D tex)
+        {
+            if (tex == null || !tex.isReadable) return 0f;
+            Color[] pixels;
+            try { pixels = tex.GetPixels(); }
+            catch { return 0f; }
+
+            if (pixels == null || pixels.Length == 0) return 0f;
+
+            int alphaCount = 0;
+            for (int i = 0; i < pixels.Length; i++)
+            {
+                if (pixels[i].a > 0.5f) alphaCount++;
+            }
+            if (alphaCount == 0) return 0f;
+
+            float areaFraction = (float)alphaCount / pixels.Length; // 0~1
+            float radiusFraction = Mathf.Sqrt(areaFraction / Mathf.PI);
+            // FruitData [Range(0.15, 0.5)]에 맞춤
+            return Mathf.Clamp(radiusFraction, 0.15f, 0.5f);
         }
     }
 }
