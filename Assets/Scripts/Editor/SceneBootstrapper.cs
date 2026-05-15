@@ -7,6 +7,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.InputSystem.UI;
 using TMPro;
+using Subak;
 
 namespace Subak.EditorTools
 {
