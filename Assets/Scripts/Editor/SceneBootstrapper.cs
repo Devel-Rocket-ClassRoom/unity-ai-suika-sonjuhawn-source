@@ -4,6 +4,9 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using UnityEngine.InputSystem.UI;
+using TMPro;
 
 namespace Subak.EditorTools
 {
@@ -109,11 +112,14 @@ namespace Subak.EditorTools
             sp.maxX = halfWidth;
             gm.spawner = sp;
 
-            // 7) 씬 저장 dirty 마크 (HUD 없음 — 3단계 PR에서 추가)
+            // 7) HUD (Canvas + Score/Next/GameOver)
+            BuildHUD(gm, sp, db);
+
+            // 8) 씬 저장 dirty 마크
             var scene = SceneManager.GetActiveScene();
             EditorSceneManager.MarkSceneDirty(scene);
             EditorUtility.DisplayDialog("Subak",
-                "씬 구성 완료! Ctrl+S로 저장 후 ▶️ Play 해보세요.\n(HUD/UI는 3단계 PR에서 추가됩니다)",
+                "씬 구성 완료! Ctrl+S로 저장 후 ▶️ Play 해보세요.",
                 "확인");
         }
 
@@ -183,6 +189,142 @@ namespace Subak.EditorTools
             importer.SaveAndReimport();
             _pixelSprite = AssetDatabase.LoadAssetAtPath<Sprite>(path);
             return _pixelSprite;
+        }
+
+        // -------------------- HUD --------------------
+        static void BuildHUD(GameManager gm, FruitSpawner sp, FruitDatabase db)
+        {
+            // 기존 HUD GameObject 제거
+            var existing = GameObject.Find("HUD");
+            if (existing != null) Object.DestroyImmediate(existing);
+
+            var hudGO = new GameObject("HUD");
+            var canvas = hudGO.AddComponent<Canvas>();
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            var scaler = hudGO.AddComponent<CanvasScaler>();
+            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            scaler.referenceResolution = new Vector2(1080, 1920);
+            hudGO.AddComponent<GraphicRaycaster>();
+
+            // EventSystem (New Input System UI Module)
+            if (Object.FindFirstObjectByType<UnityEngine.EventSystems.EventSystem>() == null)
+            {
+                var es = new GameObject("EventSystem");
+                es.AddComponent<UnityEngine.EventSystems.EventSystem>();
+                es.AddComponent<InputSystemUIInputModule>();
+            }
+
+            // 점수 (상단 좌측)
+            var scoreText = CreateText(hudGO.transform, "ScoreText", "점수  0",
+                new Vector2(40f, -40f), TextAlignmentOptions.TopLeft, 64,
+                anchor: TextAnchor.UpperLeft);
+
+            // 최고 단계 (점수 아래)
+            var highText = CreateText(hudGO.transform, "HighestStageText", "최고 단계  -",
+                new Vector2(40f, -120f), TextAlignmentOptions.TopLeft, 36,
+                anchor: TextAnchor.UpperLeft);
+
+            // Next 레이블 (상단 우측)
+            CreateText(hudGO.transform, "NextLabel", "Next",
+                new Vector2(-40f, -40f), TextAlignmentOptions.TopRight, 36,
+                anchor: TextAnchor.UpperRight);
+
+            // Next 미리보기 이미지
+            var nextGO = new GameObject("NextImage", typeof(RectTransform));
+            nextGO.transform.SetParent(hudGO.transform, false);
+            var nextImg = nextGO.AddComponent<Image>();
+            nextImg.preserveAspect = true;
+            var nextRT = nextGO.GetComponent<RectTransform>();
+            nextRT.anchorMin = new Vector2(1f, 1f);
+            nextRT.anchorMax = new Vector2(1f, 1f);
+            nextRT.pivot = new Vector2(1f, 1f);
+            nextRT.anchoredPosition = new Vector2(-40f, -100f);
+            nextRT.sizeDelta = new Vector2(140f, 140f);
+
+            // GameOver 패널 (반투명 풀스크린)
+            var panelGO = new GameObject("GameOverPanel", typeof(RectTransform));
+            panelGO.transform.SetParent(hudGO.transform, false);
+            var panelRT = panelGO.GetComponent<RectTransform>();
+            panelRT.anchorMin = Vector2.zero;
+            panelRT.anchorMax = Vector2.one;
+            panelRT.offsetMin = Vector2.zero;
+            panelRT.offsetMax = Vector2.zero;
+            var bg = panelGO.AddComponent<Image>();
+            bg.color = new Color(0f, 0f, 0f, 0.6f);
+
+            CreateText(panelGO.transform, "GameOverLabel", "Game Over",
+                new Vector2(0, 240), TextAlignmentOptions.Center, 120,
+                anchor: TextAnchor.MiddleCenter);
+
+            var finalScoreText = CreateText(panelGO.transform, "FinalScoreText", "최종 점수  0",
+                new Vector2(0, 80), TextAlignmentOptions.Center, 64,
+                anchor: TextAnchor.MiddleCenter);
+
+            var finalHighestText = CreateText(panelGO.transform, "FinalHighestStageText", "최고 단계  -",
+                new Vector2(0, 0), TextAlignmentOptions.Center, 40,
+                anchor: TextAnchor.MiddleCenter);
+
+            // 재시작 버튼
+            var btnGO = new GameObject("RestartButton", typeof(RectTransform));
+            btnGO.transform.SetParent(panelGO.transform, false);
+            var btnRT = btnGO.GetComponent<RectTransform>();
+            btnRT.anchorMin = new Vector2(0.5f, 0.5f);
+            btnRT.anchorMax = new Vector2(0.5f, 0.5f);
+            btnRT.pivot = new Vector2(0.5f, 0.5f);
+            btnRT.anchoredPosition = new Vector2(0f, -140f);
+            btnRT.sizeDelta = new Vector2(380f, 110f);
+            var btnImg = btnGO.AddComponent<Image>();
+            btnImg.color = new Color(1f, 0.85f, 0.35f);
+            var btn = btnGO.AddComponent<Button>();
+            CreateText(btnGO.transform, "Label", "다시 하기",
+                Vector2.zero, TextAlignmentOptions.Center, 44,
+                anchor: TextAnchor.MiddleCenter);
+
+            panelGO.SetActive(false);
+
+            // GameHUD 컴포넌트 부착 + 와이어링
+            var hud = hudGO.AddComponent<GameHUD>();
+            hud.gameManager = gm;
+            hud.spawner = sp;
+            hud.database = db;
+            hud.scoreText = scoreText;
+            hud.highestStageText = highText;
+            hud.nextFruitImage = nextImg;
+            hud.gameOverPanel = panelGO;
+            hud.finalScoreText = finalScoreText;
+            hud.finalHighestStageText = finalHighestText;
+            hud.restartButton = btn;
+        }
+
+        static TMP_Text CreateText(Transform parent, string name, string text,
+            Vector2 anchoredPos, TextAlignmentOptions align, int fontSize,
+            TextAnchor anchor = TextAnchor.UpperLeft)
+        {
+            var go = new GameObject(name, typeof(RectTransform));
+            go.transform.SetParent(parent, false);
+            var rt = go.GetComponent<RectTransform>();
+            switch (anchor)
+            {
+                case TextAnchor.UpperRight:
+                    rt.anchorMin = new Vector2(1f, 1f); rt.anchorMax = new Vector2(1f, 1f); rt.pivot = new Vector2(1f, 1f);
+                    break;
+                case TextAnchor.MiddleCenter:
+                    rt.anchorMin = new Vector2(0.5f, 0.5f); rt.anchorMax = new Vector2(0.5f, 0.5f); rt.pivot = new Vector2(0.5f, 0.5f);
+                    break;
+                case TextAnchor.UpperLeft:
+                default:
+                    rt.anchorMin = new Vector2(0f, 1f); rt.anchorMax = new Vector2(0f, 1f); rt.pivot = new Vector2(0f, 1f);
+                    break;
+            }
+            rt.anchoredPosition = anchoredPos;
+            rt.sizeDelta = new Vector2(800f, 100f);
+
+            var tm = go.AddComponent<TextMeshProUGUI>();
+            tm.text = text;
+            tm.fontSize = fontSize;
+            tm.alignment = align;
+            tm.color = (anchor == TextAnchor.MiddleCenter) ? Color.white : Color.black;
+            return tm;
         }
     }
 }
