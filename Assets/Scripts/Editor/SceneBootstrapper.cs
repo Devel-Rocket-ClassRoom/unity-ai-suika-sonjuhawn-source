@@ -210,7 +210,7 @@ namespace Subak.EditorTools
             mat.mainTexture.wrapMode = TextureWrapMode.Repeat;
             lr.material = mat;
 
-            var guide = guideGO.AddComponent<DropGuide>();
+            var guide = guideGO.AddComponent<Subak.DropGuide>();
             guide.spawner = sp;
             guide.topY = floorY + wallHeight + 0.3f;
             guide.bottomY = floorY + 0.2f;
